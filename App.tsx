@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { StoreProvider } from './context/StoreContext';
 import { Layout } from './components/Layout';
@@ -16,37 +16,50 @@ import { Checkout } from './pages/Checkout';
 import { Membership } from './pages/Membership';
 
 const App = () => {
+  const [backendStatus, setBackendStatus] = useState<string>('Connecting...');
+
+  useEffect(() => {
+    fetch('http://localhost:5001/')
+      .then(res => res.text())
+      .then(data => setBackendStatus(data))
+      .catch(err => setBackendStatus('Backend connection failed'));
+  }, []);
+
   return (
     <StoreProvider>
       <HashRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route path="/" element={
+            <>
+              <Layout />
+            </>
+          }>
             <Route index element={<Home />} />
-            
+
             {/* Shop Routes */}
             <Route path="shop" element={<Shop />} />
             <Route path="shop/:category" element={<Shop />} />
             <Route path="shop/:category/:subcategory" element={<Shop />} />
             <Route path="product/:id" element={<Shop />} />
             <Route path="checkout" element={<Checkout />} />
-            
+
             {/* Club & Membership Routes */}
             <Route path="club" element={<Club />} />
             <Route path="club/member" element={<Club />} />
             <Route path="club/ambassador" element={<Club />} />
             <Route path="membership" element={<Membership />} />
-            
+
             {/* Academy Routes */}
             <Route path="academy" element={<Academy />} />
             <Route path="academy/online" element={<Academy />} />
             <Route path="academy/presencial" element={<Academy />} />
-            
+
             {/* Other Routes */}
             <Route path="distributors" element={<Distributors />} />
             <Route path="about" element={<About />} />
             <Route path="rent" element={<RentSpaces />} />
             <Route path="gallery" element={<Gallery />} />
-            
+
             {/* Functional Routes */}
             <Route path="login" element={<Login />} />
             <Route path="admin" element={<AdminDashboard />} />
